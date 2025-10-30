@@ -3,8 +3,9 @@ name = "lif2ometiff"
 version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
-requires-python = ">=3.13"
+requires-python = ">=3.12"
 dependencies = ["bioio","bioio-lif","tifffile"]
+[project.optional-dependencies]
 dev = ["bumpver","mypy"]
 
 [tool.ruff.lint]
@@ -24,7 +25,7 @@ select = [
 ]
 
 [tool.mypy]
-python_version = '3.13'
+python_version = '3.14'
 mypy_path = "src"
 packages = "lif2ometiff"
 strict = true
