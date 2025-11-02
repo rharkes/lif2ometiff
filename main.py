@@ -4,7 +4,7 @@ from pathlib import Path
 import bioio_lif
 from bioio import BioImage
 
-from lif2ometiff import save_tiff, slugify
+from lif2ometiff import __version__, save_tiff, slugify
 
 
 def get_args() -> argparse.Namespace:
@@ -30,21 +30,32 @@ def get_args() -> argparse.Namespace:
         help="The output folder where .ome.tiff files will be stored",
         default=Path.cwd(),
     )
+
+    myparser.add_argument(
+        "-v",
+        "--version",
+        action="store_true",
+        help="Display the version of lif2ometiff",
+        default=False,
+    )
     return myparser.parse_args()
 
 
 if __name__ == "__main__":
     args = get_args()
-    liffiles = [x for x in Path(args.input).glob("*.tif")]
-    print(f"Found {len(liffiles)} liffiles.")
-    for liffile in liffiles:
-        myimage = BioImage(liffile, reader=bioio_lif.Reader)
-        for i in range(len(myimage.scenes)):
-            myimage.set_scene(i)
-            save_tiff(
-                myimage,
-                Path(
-                    Path(args.output),
-                    f"{liffile.stem}_{slugify(myimage.current_scene)}.ome.tif",
-                ),
-            )
+    if args.version:
+        print(f"lif2ometiff version: {__version__}")
+    else:
+        liffiles = [x for x in Path(args.input).glob("*.tif")]
+        print(f"Found {len(liffiles)} liffiles.")
+        for liffile in liffiles:
+            myimage = BioImage(liffile, reader=bioio_lif.Reader)
+            for i in range(len(myimage.scenes)):
+                myimage.set_scene(i)
+                save_tiff(
+                    myimage,
+                    Path(
+                        Path(args.output),
+                        f"{liffile.stem}_{slugify(myimage.current_scene)}.ome.tif",
+                    ),
+                )
