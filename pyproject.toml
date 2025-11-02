@@ -6,7 +6,7 @@ readme = "README.md"
 requires-python = ">=3.12"
 dependencies = ["bioio","bioio-lif","tifffile"]
 [project.optional-dependencies]
-dev = ["bumpver","mypy"]
+dev = ["bumpver","mypy", "pyinstaller"]
 
 [tool.ruff.lint]
 select = [

@@ -28,3 +28,8 @@ for i in range(len(myimage.scenes)):
         Path(outfolder, f"{file.stem}_{slugify(myimage.current_scene)}.ome.tif"),
     )
 ```
+
+## Build Instructions
+Install with development dependencies: `uv pip install -e .[dev]`
+
+Build with: `pyinstaller main.spec`
