@@ -4,7 +4,7 @@
 Converts a .lif file to a pyramidal tiled compressed .ome.tif file, and saves the meta-data as .xml file.
 
 ## Installation
-* Download the executable for linux or windows at [releases](/releases/latest).
+* Download the executable for linux or windows at [releases](https://github.com/rharkes/lif2ometiff/releases/latest).
 * Put somewhere that is present in the Path.
 * Run `lif2ometiff` or `lif2ometiff -h` for help. 
 
