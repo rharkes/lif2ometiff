@@ -46,7 +46,7 @@ if __name__ == "__main__":
     if args.version:
         print(f"lif2ometiff version: {__version__}")
     else:
-        liffiles = [x for x in Path(args.input).glob("*.tif")]
+        liffiles = [x for x in Path(args.input).glob("*.lif")]
         print(f"Found {len(liffiles)} liffiles.")
         for liffile in liffiles:
             myimage = BioImage(liffile, reader=bioio_lif.Reader)

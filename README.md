@@ -4,10 +4,15 @@
 Converts a .lif file to a pyramidal tiled compressed .ome.tif file, and saves the meta-data as .xml file.
 
 ## Installation
+* Download the executable for linux or windows at [releases](/releases/latest).
+* Put somewhere that is present in the Path.
+* Run `lif2ometiff` or `lif2ometiff -h` for help. 
+
+## Running code
 Clone repository and install:
 `uv pip install .`
 
-## Example
+### Example
 To convert all scenes to seperate files:
 ```python
 from pathlib import Path
