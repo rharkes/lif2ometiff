@@ -6,6 +6,7 @@ from pathlib import Path
 
 import numpy as np
 from bioio import BioImage
+from dask.array import Array
 from tifffile import TiffWriter
 
 
@@ -77,6 +78,60 @@ def save_tiff(image: BioImage, pth: Path) -> None:
                 compression="zlib",
                 resolutionunit="CENTIMETER",
             )
+
+
+def save_tiff_tiles(image: BioImage, img_tile_dask: Array, pth: Path) -> None:
+    """
+    pixelsize, channelnames, dimensions
+    :param image:
+    :param img_tile_dask:
+    :param pth:
+    :return:
+    """
+    with open(Path(pth.parent, pth.stem[0:-4] + ".xml"), "wb") as fp:
+        fp.write(etree.tostring(image.metadata))
+    with TiffWriter(pth, bigtiff=True, ome=True) as tif:
+        dims = "".join([c for c in image.dims.order if c != "M"])
+        if not ((dims[-2::] == "XY") | (dims[-2::] == "YX")):
+            raise ValueError(f"Dimension order {dims} is not supported.")
+        dims_squeeze = "".join([x for i, x in enumerate(dims) if img_tile_dask.shape[i] != 1])
+        channelnames = [str(x) for x in image.channel_names]
+        metadata = {
+            "axes": dims_squeeze,
+            "SignificantBits": 8 * image.dtype.itemsize,
+            "PhysicalSizeX": image.physical_pixel_sizes.X,
+            "PhysicalSizeXUnit": "µm",
+            "PhysicalSizeY": image.physical_pixel_sizes.Y,
+            "PhysicalSizeYUnit": "µm",
+            "Channel": {"Name": channelnames},
+        }
+        if image.time_interval:
+            metadata["TimeIncrement"] = image.time_interval
+            metadata["TimeIncrementUnit"] = "s"
+        if image.physical_pixel_sizes.Z:
+            metadata["PhysicalSizeZ"] = image.physical_pixel_sizes.Z
+            metadata["PhysicalSizeZUnit"] = "µm"
+        print(f"Loading data: {img_tile_dask.shape} pixels: {dims}")
+        data = np.squeeze(np.asarray(img_tile_dask))
+        print(f"Writing data: {data.shape} pixels: {dims_squeeze}")
+        physical_pixel_size_x = (
+            (1e4 / image.physical_pixel_sizes.X) if image.physical_pixel_sizes.X else 1
+        )
+        physical_pixel_size_y = (
+            (1e4 / image.physical_pixel_sizes.Y) if image.physical_pixel_sizes.Y else 1
+        )
+        tif.write(
+            data,
+            resolution=(
+                physical_pixel_size_x,
+                physical_pixel_size_y,
+            ),
+            metadata=metadata,
+            tile=(512, 512),
+            photometric="minisblack",
+            compression="zlib",
+            resolutionunit="CENTIMETER",
+        )
 
 
 def slugify(value: str, allow_unicode: bool = False) -> str:
