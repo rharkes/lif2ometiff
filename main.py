@@ -52,9 +52,10 @@ if __name__ == "__main__":
             myimage = BioImage(
                 liffile,
                 reader=bioio_lif.Reader,
+                reconstruct_mosaic=False,
                 is_x_and_y_swapped=False,
                 is_x_flipped=True,
-                is_y_flipped=True
+                is_y_flipped=True,
             )
             for i in range(len(myimage.scenes)):
                 myimage.set_scene(i)

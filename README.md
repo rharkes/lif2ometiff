@@ -28,9 +28,10 @@ file = Path(folder, "somefile.lif")
 myimage = BioImage(
     file,
     reader=bioio_lif.Reader,
+    reconstruct_mosaic=True,
     is_x_and_y_swapped=False,
     is_x_flipped=True,
-    is_y_flipped=True
+    is_y_flipped=True,
 )
 for i in range(len(myimage.scenes)):
     myimage.set_scene(i)
