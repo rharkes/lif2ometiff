@@ -49,7 +49,13 @@ if __name__ == "__main__":
         liffiles = [x for x in Path(args.input).glob("*.lif")]
         print(f"Found {len(liffiles)} liffiles.")
         for liffile in liffiles:
-            myimage = BioImage(liffile, reader=bioio_lif.Reader)
+            myimage = BioImage(
+                liffile,
+                reader=bioio_lif.Reader,
+                is_x_and_y_swapped=False,
+                is_x_flipped=True,
+                is_y_flipped=True
+            )
             for i in range(len(myimage.scenes)):
                 myimage.set_scene(i)
                 save_tiff(

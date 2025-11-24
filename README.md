@@ -25,7 +25,13 @@ from lif2ometiff import save_tiff, slugify
 folder = Path(r"D:\temp")
 outfolder = Path(r"D:\temp")
 file = Path(folder, "somefile.lif")
-myimage = BioImage(file, reader=bioio_lif.Reader)
+myimage = BioImage(
+    file,
+    reader=bioio_lif.Reader,
+    is_x_and_y_swapped=False,
+    is_x_flipped=True,
+    is_y_flipped=True
+)
 for i in range(len(myimage.scenes)):
     myimage.set_scene(i)
     save_tiff(
