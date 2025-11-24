@@ -4,7 +4,7 @@ from pathlib import Path
 import bioio_lif
 from bioio import BioImage
 
-from lif2ometiff import __version__, save_tiff, slugify
+from lif2ometiff import __version__, save_tiff, save_tiff_tiles, slugify
 
 
 def get_args() -> argparse.Namespace:
@@ -66,3 +66,35 @@ if __name__ == "__main__":
                         f"{liffile.stem}_{slugify(myimage.current_scene)}.ome.tif",
                     ),
                 )
+
+            for i in range(len(myimage.scenes)):
+                myimage.set_scene(i)
+                if "M" in myimage.dims.order:
+                    n_tiles = len(myimage.get_mosaic_tile_positions())
+                    dims = "".join([c for c in myimage.dims.order if c != "M"])
+                    if n_tiles > 1:
+                        for j in range(n_tiles):
+                            dask_img = myimage.get_image_dask_data(dims, M=j)
+                            save_tiff_tiles(
+                                myimage,
+                                dask_img,
+                                Path(
+                                    Path(args.output),
+                                     f"{liffile.stem}_tile_{str(j + 1)}_{slugify(myimage.current_scene)}.ome.tif"),
+                            )
+                    else:
+                        save_tiff(
+                            myimage,
+                            Path(
+                                Path(args.output),
+                                f"{liffile.stem}_{slugify(myimage.current_scene)}.ome.tif",
+                            ),
+                        )
+                else:
+                    save_tiff(
+                        myimage,
+                        Path(
+                            Path(args.output),
+                            f"{liffile.stem}_{slugify(myimage.current_scene)}.ome.tif",
+                        ),
+                    )
