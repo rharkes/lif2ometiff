@@ -32,6 +32,14 @@ def get_args() -> argparse.Namespace:
     )
 
     myparser.add_argument(
+        "-m",
+        "--mosaic",
+        type=bool,
+        help="Whether to perform a basic merge of mosaic scans. Crops pixels when True! Default False",
+        default=False,
+    )
+
+    myparser.add_argument(
         "-v",
         "--version",
         action="store_true",
@@ -52,7 +60,7 @@ if __name__ == "__main__":
             myimage = BioImage(
                 liffile,
                 reader=bioio_lif.Reader,
-                reconstruct_mosaic=False,
+                reconstruct_mosaic=args.mosaic,
                 is_x_and_y_swapped=False,
                 is_x_flipped=True,
                 is_y_flipped=True,
