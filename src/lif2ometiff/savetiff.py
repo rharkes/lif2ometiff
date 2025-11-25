@@ -115,7 +115,7 @@ def save_tiff_tiles(image: BioImage, pth: Path) -> None:
                 metadata["PhysicalSizeZ"] = image.physical_pixel_sizes.Z
                 metadata["PhysicalSizeZUnit"] = "µm"
             print(f"Loading data: {img_dask.shape} pixels: {dims}")
-            data = np.squeeze(img_dask)
+            data = np.squeeze(np.asarray(img_dask))
             print(f"Writing data: {data.shape} pixels: {dims_squeeze}")
             physical_pixel_size_x = (
                 (1e4 / image.physical_pixel_sizes.X) if image.physical_pixel_sizes.X else 1
