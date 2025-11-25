@@ -91,7 +91,7 @@ def save_tiff_tiles(image: BioImage, pth: Path) -> None:
     dims = "".join([c for c in image.dims.order if c != "M"])
     for i in range(n_tiles):
         img_dask = image.get_image_dask_data(dims, M=i)
-        pth_tile = Path(pth.parent, f"{pth.stem}_{slugify(image.current_scene)}_tile_{str(i+1)}.ome.tif")
+        pth_tile = Path(pth.parent, f"{pth.stem[:-4]}_tile_{str(i+1)}.ome.tif")
         with open(Path(pth_tile.parent, pth_tile.stem[0:-4] + ".xml"), "wb") as fp:
             fp.write(etree.tostring(image.metadata))
         with TiffWriter(pth_tile, bigtiff=True, ome=True) as tif:
