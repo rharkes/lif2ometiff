@@ -6,7 +6,7 @@ from pathlib import Path
 
 import numpy as np
 from bioio import BioImage
-from dask.array import Array
+
 from tifffile import TiffWriter
 
 
