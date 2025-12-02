@@ -97,7 +97,7 @@ def save_tiff_tiles(image: BioImage, pth: Path) -> None:
         with TiffWriter(pth_tile, bigtiff=True, ome=True) as tif:
             if not ((dims[-2::] == "XY") | (dims[-2::] == "YX")):
                 raise ValueError(f"Dimension order {dims} is not supported.")
-            dims_squeeze = "".join([x for i, x in enumerate(dims) if img_dask.shape[i] != 1])
+            dims_squeeze = "".join([x for j, x in enumerate(dims) if img_dask.shape[j] != 1])
             channelnames = [str(x) for x in image.channel_names]
             metadata = {
                 "axes": dims_squeeze,
