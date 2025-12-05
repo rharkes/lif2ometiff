@@ -42,16 +42,11 @@ for i in range(len(myimage.scenes)):
                 myimage,
                 Path(outfolder, f"{file.stem}_{slugify(myimage.current_scene)}.ome.tif"),
             )
-        else:
-            save_tiff(
-                myimage,
-                Path(outfolder, f"{file.stem}_{slugify(myimage.current_scene)}.ome.tif"),
-            )
-    else:
-        save_tiff(
-            myimage,
-            Path(outfolder, f"{file.stem}_{slugify(myimage.current_scene)}.ome.tif"),
-        )
+            continue
+    save_tiff(
+        myimage,
+        Path(outfolder, f"{file.stem}_{slugify(myimage.current_scene)}.ome.tif"),
+    )
 ```
 
 ## Build Instructions
