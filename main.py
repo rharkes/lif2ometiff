@@ -1,4 +1,5 @@
 import argparse
+import textwrap
 from pathlib import Path
 
 import bioio_lif
@@ -35,7 +36,10 @@ def get_args() -> argparse.Namespace:
         "-m",
         "--mosaic",
         type=bool,
-        help="Whether to perform a basic merge of mosaic scans. Crops pixels when True! Default False",
+        help=textwrap.dedent("""\
+        Whether to perform a basic merge of mosaic scans.\
+        Crops pixels when True! Default False
+        """),
         default=False,
     )
 
@@ -84,7 +88,8 @@ if __name__ == "__main__":
                             myimage,
                             Path(
                                 Path(args.output),
-                                f"{liffile.stem}_{slugify(myimage.current_scene)}.ome.tif"),
+                                f"{liffile.stem}_{slugify(myimage.current_scene)}.ome.tif",
+                            ),
                         )
                     else:
                         save_tiff(

@@ -6,7 +6,6 @@ from pathlib import Path
 
 import numpy as np
 from bioio import BioImage
-
 from tifffile import TiffWriter
 
 
@@ -91,13 +90,15 @@ def save_tiff_tiles(image: BioImage, pth: Path) -> None:
     dims = "".join([c for c in image.dims.order if c != "M"])
     for i in range(n_tiles):
         img_dask = image.get_image_dask_data(dims, M=i)
-        pth_tile = Path(pth.parent, f"{pth.stem[:-4]}_tile_{str(i+1)}.ome.tif")
+        pth_tile = Path(pth.parent, f"{pth.stem[:-4]}_tile_{str(i + 1)}.ome.tif")
         with open(Path(pth_tile.parent, pth_tile.stem[0:-4] + ".xml"), "wb") as fp:
             fp.write(etree.tostring(image.metadata))
         with TiffWriter(pth_tile, bigtiff=True, ome=True) as tif:
             if not ((dims[-2::] == "XY") | (dims[-2::] == "YX")):
                 raise ValueError(f"Dimension order {dims} is not supported.")
-            dims_squeeze = "".join([x for j, x in enumerate(dims) if img_dask.shape[j] != 1])
+            dims_squeeze = "".join(
+                [x for j, x in enumerate(dims) if img_dask.shape[j] != 1]
+            )
             channelnames = [str(x) for x in image.channel_names]
             metadata = {
                 "axes": dims_squeeze,
@@ -118,10 +119,14 @@ def save_tiff_tiles(image: BioImage, pth: Path) -> None:
             data = np.squeeze(np.asarray(img_dask))
             print(f"Writing data: {data.shape} pixels: {dims_squeeze}")
             physical_pixel_size_x = (
-                (1e4 / image.physical_pixel_sizes.X) if image.physical_pixel_sizes.X else 1
+                (1e4 / image.physical_pixel_sizes.X)
+                if image.physical_pixel_sizes.X
+                else 1
             )
             physical_pixel_size_y = (
-                (1e4 / image.physical_pixel_sizes.Y) if image.physical_pixel_sizes.Y else 1
+                (1e4 / image.physical_pixel_sizes.Y)
+                if image.physical_pixel_sizes.Y
+                else 1
             )
             tif.write(
                 data,
