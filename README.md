@@ -35,18 +35,16 @@ myimage = BioImage(
 )
 for i in range(len(myimage.scenes)):
     myimage.set_scene(i)
-    if "M" in myimage.dims.order:
-        n_tiles = len(myimage.get_mosaic_tile_positions())
-        if n_tiles > 1:
-            save_tiff_tiles(
-                myimage,
-                Path(outfolder, f"{file.stem}_{slugify(myimage.current_scene)}.ome.tif"),
-            )
-            continue
-    save_tiff(
-        myimage,
-        Path(outfolder, f"{file.stem}_{slugify(myimage.current_scene)}.ome.tif"),
-    )
+    if ("M" in myimage.dims.order) and (len(myimage.get_mosaic_tile_positions()) > 1):
+        save_tiff_tiles(
+            myimage,
+            Path(outfolder, f"{file.stem}_{slugify(myimage.current_scene)}.ome.tif"),
+        )
+    else:
+        save_tiff(
+            myimage,
+            Path(outfolder, f"{file.stem}_{slugify(myimage.current_scene)}.ome.tif"),
+        )
 ```
 
 ## Build Instructions
