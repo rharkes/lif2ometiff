@@ -71,7 +71,9 @@ if __name__ == "__main__":
             )
             for i in range(len(myimage.scenes)):
                 myimage.set_scene(i)
-                if ("M" in myimage.dims.order) and (len(myimage.get_mosaic_tile_positions()) > 1):
+                if ("M" in myimage.dims.order) and (
+                    len(myimage.get_mosaic_tile_positions()) > 1
+                ):
                     save_tiff_tiles(
                         myimage,
                         Path(
