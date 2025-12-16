@@ -1,10 +1,11 @@
 import argparse
+import textwrap
 from pathlib import Path
 
 import bioio_lif
 from bioio import BioImage
 
-from lif2ometiff import __version__, save_tiff, slugify
+from lif2ometiff import __version__, save_tiff, save_tiff_tiles, slugify
 
 
 def get_args() -> argparse.Namespace:
@@ -32,6 +33,17 @@ def get_args() -> argparse.Namespace:
     )
 
     myparser.add_argument(
+        "-m",
+        "--mosaic",
+        type=bool,
+        help=textwrap.dedent("""\
+        Whether to perform a basic merge of mosaic scans.\
+        Crops pixels when True! Default False
+        """),
+        default=False,
+    )
+
+    myparser.add_argument(
         "-v",
         "--version",
         action="store_true",
@@ -49,13 +61,31 @@ if __name__ == "__main__":
         liffiles = [x for x in Path(args.input).glob("*.lif")]
         print(f"Found {len(liffiles)} liffiles.")
         for liffile in liffiles:
-            myimage = BioImage(liffile, reader=bioio_lif.Reader)
+            myimage = BioImage(
+                liffile,
+                reader=bioio_lif.Reader,
+                reconstruct_mosaic=args.mosaic,
+                is_x_and_y_swapped=False,
+                is_x_flipped=True,
+                is_y_flipped=True,
+            )
             for i in range(len(myimage.scenes)):
                 myimage.set_scene(i)
-                save_tiff(
-                    myimage,
-                    Path(
-                        Path(args.output),
-                        f"{liffile.stem}_{slugify(myimage.current_scene)}.ome.tif",
-                    ),
-                )
+                if ("M" in myimage.dims.order) and (
+                    len(myimage.get_mosaic_tile_positions()) > 1
+                ):
+                    save_tiff_tiles(
+                        myimage,
+                        Path(
+                            Path(args.output),
+                            f"{liffile.stem}_{slugify(myimage.current_scene)}.ome.tif",
+                        ),
+                    )
+                else:
+                    save_tiff(
+                        myimage,
+                        Path(
+                            Path(args.output),
+                            f"{liffile.stem}_{slugify(myimage.current_scene)}.ome.tif",
+                        ),
+                    )
