@@ -46,3 +46,9 @@ push = true
 "src/lif2ometiff/version.py" = [
     "{version}"
 ]
+"version.txt" = [
+    'filevers=(MAJOR, MINOR, PATCH, 0),',
+    'prodvers=(MAJOR, MINOR, PATCH, 0),',
+    "StringStruct('FileVersion', 'MAJOR.MINOR.PATCH.0'),",
+    "StringStruct('ProductVersion', 'MAJOR.MINOR.PATCH.0')",
+]
