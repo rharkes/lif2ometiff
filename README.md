@@ -50,4 +50,10 @@ for i in range(len(myimage.scenes)):
 ## Build Instructions
 Install with development dependencies: `uv pip install -e .[dev]`
 
-Build with: `pyinstaller main.spec`
+Make sure `uvx ruff check` runs without error
+
+Build with: 
+```
+uv pip install .[dev]
+pyinstaller --clean main.spec
+```

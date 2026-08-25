@@ -33,25 +33,32 @@ def get_args() -> argparse.Namespace:
     )
 
     myparser.add_argument(
+        "-x",
+        "--storexml",
+        action="store_true",
+        help=textwrap.dedent("""\
+            Store xml data as seperate file.
+            """),
+    )
+
+    myparser.add_argument(
         "-m",
         "--mosaic",
-        type=bool,
+        action="store_true",
         help=textwrap.dedent("""\
         Whether to perform a basic merge of mosaic scans.\
-        Crops pixels when True! Default False
+        Crops pixels when True!
         """),
-        default=False,
     )
 
     myparser.add_argument(
         "-d",
         "--delete",
-        type=bool,
+        action="store_true",
         help=textwrap.dedent("""\
         Remove the .lif file after conversion. \
         Also removes .lifext file if present.
         """),
-        default=False,
     )
 
     myparser.add_argument(
@@ -59,7 +66,6 @@ def get_args() -> argparse.Namespace:
         "--version",
         action="store_true",
         help="Display the version of lif2ometiff",
-        default=False,
     )
     return myparser.parse_args()
 
@@ -90,7 +96,8 @@ if __name__ == "__main__":
                         Path(
                             Path(args.output),
                             f"{liffile.stem}_{slugify(myimage.current_scene)}.ome.tif",
-                        ),
+
+                        ),args.storexml,
                     )
                 else:
                     save_tiff(
@@ -98,7 +105,8 @@ if __name__ == "__main__":
                         Path(
                             Path(args.output),
                             f"{liffile.stem}_{slugify(myimage.current_scene)}.ome.tif",
-                        ),
+
+                        ),args.storexml,
                     )
             if args.delete:
                 lifext = Path(liffile.parent, liffile.stem + ".lifext")

@@ -9,15 +9,17 @@ from bioio import BioImage
 from tifffile import TiffWriter
 
 
-def save_tiff(image: BioImage, pth: Path) -> None:
+def save_tiff(image: BioImage, pth: Path, storexml: bool = False) -> None:
     """
     pixelsize, channelnames, dimensions
+    :param storexml:
     :param image:
     :param pth:
     :return:
     """
-    with open(Path(pth.parent, pth.stem[0:-4] + ".xml"), "wb") as fp:
-        fp.write(etree.tostring(image.metadata))
+    if storexml:
+        with open(Path(pth.parent, pth.stem[0:-4] + ".xml"), "wb") as fp:
+            fp.write(etree.tostring(image.metadata))
     with TiffWriter(pth, bigtiff=True, ome=True) as tif:
         subresolutions = max([0, math.floor(math.log2(max(image.shape))) - 9])
         print(f"Writing {subresolutions + 1} subresolutions.")
@@ -79,9 +81,10 @@ def save_tiff(image: BioImage, pth: Path) -> None:
             )
 
 
-def save_tiff_tiles(image: BioImage, pth: Path) -> None:
+def save_tiff_tiles(image: BioImage, pth: Path, storexml: bool = False) -> None:
     """
     pixelsize, channelnames, dimensions
+    :param storexml:
     :param image:
     :param pth:
     :return:
@@ -91,8 +94,9 @@ def save_tiff_tiles(image: BioImage, pth: Path) -> None:
     for i in range(n_tiles):
         img_dask = image.get_image_dask_data(dims, M=i)
         pth_tile = Path(pth.parent, f"{pth.stem[:-4]}_tile_{str(i + 1)}.ome.tif")
-        with open(Path(pth_tile.parent, pth_tile.stem[0:-4] + ".xml"), "wb") as fp:
-            fp.write(etree.tostring(image.metadata))
+        if storexml:
+            with open(Path(pth_tile.parent, pth_tile.stem[0:-4] + ".xml"), "wb") as fp:
+                fp.write(etree.tostring(image.metadata))
         with TiffWriter(pth_tile, bigtiff=True, ome=True) as tif:
             if not ((dims[-2::] == "XY") | (dims[-2::] == "YX")):
                 raise ValueError(f"Dimension order {dims} is not supported.")
