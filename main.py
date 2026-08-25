@@ -44,6 +44,17 @@ def get_args() -> argparse.Namespace:
     )
 
     myparser.add_argument(
+        "-d",
+        "--delete",
+        type=bool,
+        help=textwrap.dedent("""\
+        Remove the .lif file after conversion. \
+        Also removes .lifext file if present.
+        """),
+        default=False,
+    )
+
+    myparser.add_argument(
         "-v",
         "--version",
         action="store_true",
@@ -89,3 +100,8 @@ if __name__ == "__main__":
                             f"{liffile.stem}_{slugify(myimage.current_scene)}.ome.tif",
                         ),
                     )
+            if args.delete:
+                lifext = Path(liffile.parent, liffile.stem + ".lifext")
+                if lifext.exists():
+                    lifext.unlink()
+                liffile.unlink()
